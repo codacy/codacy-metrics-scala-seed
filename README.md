@@ -1,0 +1,1 @@
+# codacy-metrics-scala-seed
