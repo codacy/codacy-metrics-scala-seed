@@ -52,6 +52,4 @@ class FileHelperSpecs extends Specification {
       scala.io.Source.fromFile(fileTmp).mkString must beEqualTo("foo")
     }
   }
-
-
 }

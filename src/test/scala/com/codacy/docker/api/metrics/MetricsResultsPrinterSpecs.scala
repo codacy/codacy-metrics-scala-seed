@@ -33,7 +33,5 @@ class MetricsResultsPrinterSpecs extends Specification {
         fileMetrics.copy(
           filename = FileHelper.stripPath(fileName, sourcePath.pathAsString)))
     }
-
   }
-
 }

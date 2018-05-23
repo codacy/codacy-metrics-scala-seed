@@ -24,5 +24,4 @@ class DelayedSpecs extends Specification with Delayed {
       Await.result(f, Duration.Inf) must not(throwA[TimeoutException])
     }
   }
-
 }
