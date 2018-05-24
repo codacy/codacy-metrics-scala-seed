@@ -58,10 +58,8 @@ After you have your results from the tool, you should print them to the standard
 {
   "filename": "path/to/my/file1.scala",
   "complexity": 1,
-  "buildtime": 2,
   "loc": 300,
   "cloc": 320,
-  "duplicatedLines": 3,
   "nrMethods": 20,
   "nrClasses": 2,
   "lineComplexities": [
