@@ -9,16 +9,16 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "build.sbt" }}
+          - v1-build-cache-{{ checksum "build.sbt" }}
           # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          - v1-build-cache-
 
-      - run: 
+      - run:
           name: Compile
           command: ./scripts/compile.sh
 
       - save_cache:
-          key: dependencies-{{ checksum "build.sbt" }}
+          key: v1-build-cache-{{ checksum "build.sbt" }}
           paths:
             - "~/.ivy2"
             - "~/.m2"
@@ -27,11 +27,11 @@ jobs:
             - "~/workdir/project/target"
             - "~/workdir/project/project"
 
-      - run: 
+      - run:
           name: Lint
           command: ./scripts/lint.sh
 
-      - run: 
+      - run:
           name: Test
           command: ./scripts/test.sh
 
@@ -43,6 +43,12 @@ jobs:
             cp -f ~/workdir/target/scala-2.12/coverage-report/cobertura.xml ~/coverage-reports/scoverage/results.xml
       - store_test_results:
           path: ~/coverage-reports
+      - store_artifacts:
+          path: ~/workdir/target/scala-2.12/coverage-report
+      - store_artifacts:
+          path: ~/workdir/target/scala-2.12/scoverage-report
+      - store_artifacts:
+          path: ~/workdir/target/scala-2.12/scoverage-data
 
 workflows:
   version: 2

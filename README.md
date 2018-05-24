@@ -1,5 +1,8 @@
-
 # Codacy Metrics Scala Seed
+
+[![Codacy Badge](https://api.codacy.com/project/badge/grade/1c524e61cd8640e79b80d406eda8754b)](https://www.codacy.com/app/Codacy/codacy-metrics-scala-seed)
+[![Build Status](https://circleci.com/gh/codacy/codacy-metrics-scala-seed.png?style=shield&circle-token=:circle-token)](https://circleci.com/gh/codacy/codacy-metrics-scala-seed)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.codacy/codacy-metrics-scala-seed/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.codacy/codacy-metrics-scala-seed)
 
 We use external tools at Codacy, this is the library we use across the multiple external tools integrations.
 For more details and examples of tools that use this project, you can check
