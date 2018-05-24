@@ -1,6 +1,6 @@
 # Codacy Metrics Scala Seed
 
-[![Codacy Badge](https://api.codacy.com/project/badge/grade/1c524e61cd8640e79b80d406eda8754b)](https://www.codacy.com/app/Codacy/codacy-metrics-scala-seed)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/84f9864f373e4228b8c030d583bd4094)](https://www.codacy.com/app/Codacy/codacy-metrics-scala-seed?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=codacy/codacy-metrics-scala-seed&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://circleci.com/gh/codacy/codacy-metrics-scala-seed.png?style=shield&circle-token=:circle-token)](https://circleci.com/gh/codacy/codacy-metrics-scala-seed)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.codacy/codacy-metrics-scala-seed/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.codacy/codacy-metrics-scala-seed)
 
