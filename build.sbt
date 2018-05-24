@@ -12,7 +12,7 @@ scalacOptions := Seq("-deprecation", "-feature", "-unchecked", "-Xlint", "-Ywarn
 resolvers += "Bintray Typesafe Repo" at "http://dl.bintray.com/typesafe/maven-releases/"
 
 libraryDependencies ++= Seq("com.typesafe.play" %% "play-json" % "2.6.9",
-                            "com.codacy" %% "codacy-plugins-api" % "1.0.0-SNAPSHOT" withSources (),
+                            "com.codacy" %% "codacy-plugins-api" % "2.1.1" withSources (),
                             "com.github.pathikrit" %% "better-files" % "3.4.0",
                             "org.specs2" %% "specs2-core" % "4.2.0" % "test")
 

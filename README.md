@@ -10,7 +10,7 @@ For more details and examples of tools that use this project, you can check
 Add to your SBT dependencies:
 
 ```
-"com.codacy" %% "codacy-metrics-scala-seed" % "1.0.0-SNAPSHOT"
+"com.codacy" %% "codacy-metrics-scala-seed" % "<VERSION>"
 ```
 
 You shouldn't worry about the library itself, we use it as a core in our tools,

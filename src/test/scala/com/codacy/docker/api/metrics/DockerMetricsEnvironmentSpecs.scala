@@ -10,6 +10,8 @@ class DockerMetricsEnvironmentSpecs extends Specification {
 
   "DockerMetricsEnvironment" should {
 
+    val dockerMetricsEnvironment = new DockerMetricsEnvironment(Map.empty)
+
     "get the metrics configuration for the tool, given a valid json file" in {
       //given
       (for {
@@ -23,7 +25,7 @@ class DockerMetricsEnvironmentSpecs extends Specification {
 
         //when
         val metricsConfig =
-          DockerMetricsEnvironment.getConfiguration(tempFile, tempFile.parent)
+          dockerMetricsEnvironment.getConfiguration(tempFile, tempFile.parent)
 
         //then
         metricsConfig must beSuccessfulTry[Option[MetricsConfiguration]](Some(metricsConfiguration))
@@ -39,7 +41,7 @@ class DockerMetricsEnvironmentSpecs extends Specification {
 
         //when
         val metricsConfig =
-          DockerMetricsEnvironment.getConfiguration(tempFile, tempFile.parent)
+          dockerMetricsEnvironment.getConfiguration(tempFile, tempFile.parent)
 
         //then
         metricsConfig must beFailedTry
@@ -50,9 +52,10 @@ class DockerMetricsEnvironmentSpecs extends Specification {
       //given
       val nonExistentFile = File("notExistentFile.xpto")
       val srcFolder = File.currentWorkingDirectory
+
       //when
       val metricsConfig =
-        DockerMetricsEnvironment.getConfiguration(nonExistentFile, srcFolder)
+        dockerMetricsEnvironment.getConfiguration(nonExistentFile, srcFolder)
 
       //then
       metricsConfig must beSuccessfulTry[Option[MetricsConfiguration]](Option.empty)
