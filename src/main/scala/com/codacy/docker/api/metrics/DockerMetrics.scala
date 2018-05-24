@@ -36,6 +36,7 @@ abstract class DockerMetrics(metricsTool: MetricsTool,
 
   private def initTimeout: Future[Unit] = {
     delay(environment.timeout) {
+      log(s"timed out after ${environment.timeout} ")
       halt(2)
     }
   }

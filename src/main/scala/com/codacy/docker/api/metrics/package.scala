@@ -42,6 +42,7 @@ package object metrics {
 
   implicit lazy val configurationOptionsKeyFormat: OFormat[MetricsConfiguration.Key] =
     Json.format[MetricsConfiguration.Key]
+
   implicit lazy val configurationOptionsFormat: Format[Map[MetricsConfiguration.Key, MetricsConfiguration.Value]] =
     Format[Map[MetricsConfiguration.Key, MetricsConfiguration.Value]](
       Reads { json: JsValue =>

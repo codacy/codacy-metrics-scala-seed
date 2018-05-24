@@ -49,6 +49,12 @@ You are free to modify it and use it for your integration.
 }
 ```
 
+Notes:
+* To run the tool in debug mode in order to have more logs, you have to 
+set the environment variable `METRICS_DEBUG` to `true` on the docker.
+* To configure the timeout for the tool you have to 
+set the environment variable `METRICS_TIMEOUT` on the docker, setting it for example to `10 seconds`, `30 minutes` or `2 hours`.
+
 #### Output
 
 You are free to write this code in the language you want.
