@@ -1,0 +1,57 @@
+version: 2
+jobs:
+  build:
+    machine: true
+    working_directory: ~/workdir
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-build-cache-{{ checksum "build.sbt" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-build-cache-
+
+      - run:
+          name: Compile
+          command: ./scripts/compile.sh
+
+      - save_cache:
+          key: v1-build-cache-{{ checksum "build.sbt" }}
+          paths:
+            - "~/.ivy2"
+            - "~/.m2"
+            - "~/.sbt"
+            - "~/workdir/target"
+            - "~/workdir/project/target"
+            - "~/workdir/project/project"
+
+      - run:
+          name: Lint
+          command: ./scripts/lint.sh
+
+      - run:
+          name: Test
+          command: ./scripts/test.sh
+
+      - run:
+          name: Store test reports
+          working_directory: ~/
+          command: |
+            mkdir -p ~/coverage-reports/scoverage
+            cp -f ~/workdir/target/scala-2.12/coverage-report/cobertura.xml ~/coverage-reports/scoverage/results.xml
+      - store_test_results:
+          path: ~/coverage-reports
+      - store_artifacts:
+          path: ~/workdir/target/scala-2.12/coverage-report
+      - store_artifacts:
+          path: ~/workdir/target/scala-2.12/scoverage-report
+      - store_artifacts:
+          path: ~/workdir/target/scala-2.12/scoverage-data
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
