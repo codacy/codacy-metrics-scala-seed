@@ -8,19 +8,13 @@ version := "1.0.0-SNAPSHOT"
 
 scalaVersion := "2.12.6"
 
-scalacOptions := Seq("-deprecation",
-                     "-feature",
-                     "-unchecked",
-                     "-Xlint",
-                     "-Ywarn-adapted-args")
+scalacOptions := Seq("-deprecation", "-feature", "-unchecked", "-Xlint", "-Ywarn-adapted-args")
 resolvers += "Bintray Typesafe Repo" at "http://dl.bintray.com/typesafe/maven-releases/"
 
-
-libraryDependencies ++= Seq(
-  "com.typesafe.play" %% "play-json" % "2.6.9",
-  "com.codacy" %% "codacy-plugins-api" % "1.0.0-SNAPSHOT" withSources (),
-  "com.github.pathikrit" %% "better-files" % "3.4.0",
-  "org.specs2" %% "specs2-core" % "4.2.0" % "test")
+libraryDependencies ++= Seq("com.typesafe.play" %% "play-json" % "2.6.9",
+                            "com.codacy" %% "codacy-plugins-api" % "1.0.0-SNAPSHOT" withSources (),
+                            "com.github.pathikrit" %% "better-files" % "3.4.0",
+                            "org.specs2" %% "specs2-core" % "4.2.0" % "test")
 
 organizationName := "Codacy"
 
@@ -46,9 +40,7 @@ startYear := Some(2018)
 
 description := "Library to develop Codacy metrics plugins"
 
-licenses := Seq(
-  "The Apache Software License, Version 2.0" -> url(
-    "http://www.apache.org/licenses/LICENSE-2.0.txt"))
+licenses := Seq("The Apache Software License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 
 homepage := Some(url("http://www.github.com/codacy/codacy-metrics-scala-seed/"))
 

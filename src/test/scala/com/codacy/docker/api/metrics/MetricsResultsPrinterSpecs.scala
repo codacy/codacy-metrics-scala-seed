@@ -17,21 +17,15 @@ class MetricsResultsPrinterSpecs extends Specification {
       val printStream = new PrintStream(outContent)
       val printer = new MetricsResultsPrinter(printStream)
       val fileName = "a.scala"
-      val fileMetrics = FileMetrics(s"$sourcePath/$fileName",
-                                    Some(1),
-                                    Some(399),
-                                    Some(23),
-                                    Some(3),
-                                    Some(2),
-                                    Set(LineComplexity(1, 2)))
+      val fileMetrics =
+        FileMetrics(s"$sourcePath/$fileName", Some(1), Some(399), Some(23), Some(3), Some(2), Set(LineComplexity(1, 2)))
 
       //when
       printer.printResults(List(fileMetrics))
 
       //then
       Json.parse(outContent.toString) mustEqual Json.toJson(
-        fileMetrics.copy(
-          filename = FileHelper.stripPath(fileName, sourcePath.pathAsString)))
+        fileMetrics.copy(filename = FileHelper.stripPath(fileName, sourcePath.pathAsString)))
     }
   }
 }

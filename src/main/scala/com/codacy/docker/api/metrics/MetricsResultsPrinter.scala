@@ -11,8 +11,7 @@ class MetricsResultsPrinter(printStream: PrintStream) {
 
   def printResults(results: List[FileMetrics]): Unit = {
     results.foreach { fileMetrics =>
-      val fileMetricsJsonStr = stringifyFileMetricsJson(
-        stripFileMetricsFileNameSourcePath(fileMetrics))
+      val fileMetricsJsonStr = stringifyFileMetricsJson(stripFileMetricsFileNameSourcePath(fileMetrics))
       printStream.println(fileMetricsJsonStr)
     }
   }
@@ -22,8 +21,6 @@ class MetricsResultsPrinter(printStream: PrintStream) {
   }
 
   private def stripFileMetricsFileNameSourcePath(fileMetrics: FileMetrics) = {
-    fileMetrics.copy(
-      filename =
-        FileHelper.stripPath(fileMetrics.filename, sourcePath.pathAsString))
+    fileMetrics.copy(filename = FileHelper.stripPath(fileMetrics.filename, sourcePath.pathAsString))
   }
 }

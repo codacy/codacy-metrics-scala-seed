@@ -19,9 +19,8 @@ abstract class DockerMetrics(metricsTool: MetricsTool) extends Delayed {
       })
       .getOrElse(10.minutes)
 
-  private lazy val isDebug: Boolean = Option(System.getProperty("debug"))
-    .flatMap(rawDebug => Try(rawDebug.toBoolean).toOption)
-    .getOrElse(false)
+  private lazy val isDebug: Boolean =
+    Option(System.getProperty("debug")).flatMap(rawDebug => Try(rawDebug.toBoolean).toOption).getOrElse(false)
 
   private lazy val resultsPrinter = new MetricsResultsPrinter(Console.out)
 
@@ -29,13 +28,10 @@ abstract class DockerMetrics(metricsTool: MetricsTool) extends Delayed {
     initTimeout(timeout)
     (for {
       config <- getConfiguration(configFilePath, sourcePath)
-      res <- withNativeTry[List[FileMetrics]](
-        Source.Directory(sourcePath.pathAsString),
-        config.flatMap(_.language),
-        config.flatMap(_.files),
-        config.flatMap(_.options).getOrElse(Map.empty))(
-        metricsTool.apply
-      )
+      res <- withNativeTry[List[FileMetrics]](Source.Directory(sourcePath.pathAsString),
+                                              config.flatMap(_.language),
+                                              config.flatMap(_.files),
+                                              config.flatMap(_.options).getOrElse(Map.empty))(metricsTool.apply)
     } yield res) match {
       case Success(results) =>
         log("receiving metrics results")
@@ -58,17 +54,14 @@ abstract class DockerMetrics(metricsTool: MetricsTool) extends Delayed {
     Console.err.println(s"[DockerMetrics] $message")
   }
 
-  private def withNativeTry[T](
-      source: Source.Directory,
-      language: Option[Language],
-      files: Option[Set[Source.File]],
-      options: Map[MetricsConfiguration.Key, MetricsConfiguration.Value])(
-      block: (
-          Source.Directory,
-          Option[Language],
-          Option[Set[Source.File]],
-          Map[MetricsConfiguration.Key, MetricsConfiguration.Value]) => Try[T])
-    : Try[T] = {
+  private def withNativeTry[T](source: Source.Directory,
+                               language: Option[Language],
+                               files: Option[Set[Source.File]],
+                               options: Map[MetricsConfiguration.Key, MetricsConfiguration.Value])(
+    block: (Source.Directory,
+            Option[Language],
+            Option[Set[Source.File]],
+            Map[MetricsConfiguration.Key, MetricsConfiguration.Value]) => Try[T]): Try[T] = {
     try {
       block(source, language, files, options)
     } catch {

@@ -6,11 +6,8 @@ import java.nio.file.{Files, Path, Paths, StandardOpenOption}
 object FileHelper {
 
   def createTmpFile(content: String, prefix: String = "config", suffix: String = ".conf"): Path = {
-    Files.write(
-      Files.createTempFile(prefix, suffix),
-      content.getBytes(StandardCharsets.UTF_8),
-      StandardOpenOption.CREATE
-    )
+    Files
+      .write(Files.createTempFile(prefix, suffix), content.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE)
   }
 
   def stripPath(filename: Path, prefix: Path): String = {
@@ -18,8 +15,7 @@ object FileHelper {
   }
 
   def stripPath(filename: String, prefix: String): String = {
-    filename.stripPrefix(prefix)
-      .stripPrefix("/")
+    filename.stripPrefix(prefix).stripPrefix("/")
   }
 
   def listAllFiles(path: String): List[File] = {
@@ -37,13 +33,8 @@ object FileHelper {
 
   def findConfigurationFile(candidates: Set[String], path: Path): Option[Path] = {
     candidates.flatMap { nativeConfigFileName =>
-      better.files.File(path).listRecursively
-        .filter(f => f.name == nativeConfigFileName)
-        .map(_.path)
-    }
-      .to[List]
-      .sortBy(_.toString.length)
-      .headOption
+      better.files.File(path).listRecursively.filter(f => f.name == nativeConfigFileName).map(_.path)
+    }.to[List].sortBy(_.toString.length).headOption
   }
 
 }

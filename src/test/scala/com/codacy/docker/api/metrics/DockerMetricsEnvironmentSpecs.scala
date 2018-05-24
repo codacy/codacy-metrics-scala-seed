@@ -15,10 +15,10 @@ class DockerMetricsEnvironmentSpecs extends Specification {
       (for {
         tempFile <- File.temporaryFile()
       } yield {
-        val metricsConfiguration = MetricsConfiguration(
-          Some(Set(Source.File(s"${tempFile.parent.pathAsString}/a.scala"))),
-          Some(Scala),
-          Some(Map.empty))
+        val metricsConfiguration =
+          MetricsConfiguration(Some(Set(Source.File(s"${tempFile.parent.pathAsString}/a.scala"))),
+                               Some(Scala),
+                               Some(Map.empty))
         tempFile.write(Json.stringify(Json.toJson(metricsConfiguration)))
 
         //when
@@ -26,8 +26,7 @@ class DockerMetricsEnvironmentSpecs extends Specification {
           DockerMetricsEnvironment.getConfiguration(tempFile, tempFile.parent)
 
         //then
-        metricsConfig must beSuccessfulTry[Option[MetricsConfiguration]](
-          Some(metricsConfiguration))
+        metricsConfig must beSuccessfulTry[Option[MetricsConfiguration]](Some(metricsConfiguration))
       }).get()
     }
 

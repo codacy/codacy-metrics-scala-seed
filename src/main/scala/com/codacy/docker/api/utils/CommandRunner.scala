@@ -38,9 +38,9 @@ object CommandRunner {
     codec.onMalformedInput(CodingErrorAction.IGNORE)
     codec.onUnmappableCharacter(CodingErrorAction.IGNORE)
 
-    Source.fromInputStream(stream)
-      .getLines()
-      .foreach { line => buffer += line }
+    Source.fromInputStream(stream).getLines().foreach { line =>
+      buffer += line
+    }
     stream.close()
   }
 
