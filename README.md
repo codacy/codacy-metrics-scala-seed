@@ -40,10 +40,10 @@ You are free to modify it and use it for your integration.
 #### Assumptions and Behaviour
 
 * To run the tool we provide the configuration file, `/.codacyrc`, with the language to run and optional parameters your tool might need.
-* The files to analyse are located in `/src`, meaning that when provided in the configuration, the paths are relative to `/src.
+* The files to analyse are located in `/src`, meaning that when provided in the configuration, the paths are relative to `/src`.
 
 * **.codacyrc**
-  * **files:** Files to be analysed (their path is relative to /src)
+  * **files:** Files to be analysed (their path is relative to `/src`)
   * **language:** Language to run the tool
 
 ```json
