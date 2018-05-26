@@ -1,20 +1,38 @@
 import sbt.Keys._
 import sbt._
-name := """codacy-metrics-scala-seed"""
 
-organization := "com.codacy"
+val scalaBinaryVersionNumber = "2.12"
+val scalaVersionNumber = s"$scalaBinaryVersionNumber.4"
 
-version := "1.0.0-SNAPSHOT"
+lazy val codacyAnalysisCli = project
+  .in(file("."))
+  .settings(
+    inThisBuild(
+      List(
+        organization := "com.codacy",
+        scalaVersion := scalaVersionNumber,
+        version := "0.1.0-SNAPSHOT",
+        scalacOptions ++= Common.compilerFlags,
+        scalacOptions in Test ++= Seq("-Yrangepos"),
+        scalacOptions in (Compile, console) --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings")
+      )),
+    name := "codacy-metrics-scala-seed",
+    // App Dependencies
+    libraryDependencies ++= Seq(
+      Dependencies.playJson,
+      Dependencies.codacyPluginsApi,
+      Dependencies.betterFiles
+    ),
+    // Test Dependencies
+    libraryDependencies ++= Dependencies.specs2.map(_ % Test)
+  )
+  .settings(Common.genericSettings: _*)
 
-scalaVersion := "2.12.6"
-
-scalacOptions := Seq("-deprecation", "-feature", "-unchecked", "-Xlint", "-Ywarn-adapted-args")
-resolvers += "Bintray Typesafe Repo" at "http://dl.bintray.com/typesafe/maven-releases/"
-
-libraryDependencies ++= Seq("com.typesafe.play" %% "play-json" % "2.6.9",
-                            "com.codacy" %% "codacy-plugins-api" % "2.1.1" withSources (),
-                            "com.github.pathikrit" %% "better-files" % "3.4.0",
-                            "org.specs2" %% "specs2-core" % "4.2.0" % "test")
+// Scapegoat
+scalaVersion in ThisBuild := scalaVersionNumber
+scalaBinaryVersion in ThisBuild := scalaBinaryVersionNumber
+scapegoatDisabledInspections in ThisBuild := Seq()
+scapegoatVersion in ThisBuild := "1.3.5"
 
 organizationName := "Codacy"
 

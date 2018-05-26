@@ -38,6 +38,7 @@ class DockerMetricsSpecs extends Specification {
                           resultsPrinter = new MetricsResultsPrinter(resultsStream = printStream)) {
           override def halt(status: Int): Unit = {
             status must beEqualTo(0)
+            ()
           }
         }
 
@@ -68,6 +69,7 @@ class DockerMetricsSpecs extends Specification {
                           resultsPrinter = new MetricsResultsPrinter(logStream = printStream)) {
           override def halt(status: Int): Unit = {
             status must beEqualTo(1)
+            ()
           }
         }
 
