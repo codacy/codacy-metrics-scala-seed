@@ -57,7 +57,7 @@ package object metrics {
       Writes(m =>
         JsObject(m.flatMap {
           case (k, v: MetricsConfigurationValue) => Option(k.value -> v.value)
-          case _ => Option.empty[(String, JsValue)]
+          case _                                 => Option.empty[(String, JsValue)]
         })))
 
   implicit val lineComplexityFormat: OFormat[LineComplexity] =

@@ -2,16 +2,21 @@
 
 set -e
 
+CURRENT_BRANCH="$(git symbolic-ref --short HEAD)"
+PUBLISH_BRANCH="master"
+
+BASE_VERSION="0.1.0-pre"
+DEFAULT_VERSION="${BASE_VERSION}.${CURRENT_BRANCH}-SNAPSHOT"
+
 if [ -n "$1" ]; then
-    export CODACY_PROJECT_TOKEN="$1"
+  VERSION="$1"
+else
+  VERSION="$DEFAULT_VERSION"
 fi
 
-sbt coverage test
-sbt coverageReport
-sbt coverageAggregate
-
-if [ -z "$CODACY_PROJECT_TOKEN" ]; then
-    echo "CODACY_PROJECT_TOKEN not found. Skipping send coverage to Codacy."
+echo "Publishing version ${VERSION}"
+if [[ -n "$CI" ]] && [[ "$CURRENT_BRANCH" == "$PUBLISH_BRANCH" || "$CIRCLE_BRANCH" == "$PUBLISH_BRANCH" ]]; then
+  sbt 'set version := "'"${VERSION}"'"' publish
 else
-    sbt codacyCoverage
+  sbt 'set version := "'"${VERSION}"'"' publishLocal
 fi
