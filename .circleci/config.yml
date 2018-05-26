@@ -33,6 +33,11 @@ jobs:
   checkout_code:
     docker:
       - image: circleci/openjdk:8-jdk
+        environment:
+          JAVA_OPTS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1'
+    environment:
+      # Customize the JVM maximum heap limit
+      JAVA_OPTS: -Xmx3200m
     working_directory: ~/workdir
     steps:
       - *restore_source_code
@@ -45,6 +50,11 @@ jobs:
   sbt_dependencies:
     docker:
       - image: circleci/openjdk:8-jdk
+        environment:
+          JAVA_OPTS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1'
+    environment:
+      # Customize the JVM maximum heap limit
+      JAVA_OPTS: -Xmx3200m
     working_directory: ~/workdir
     steps:
       - *restore_source_code
@@ -60,9 +70,14 @@ jobs:
             - ~/.sbt
           key: sbt-ivy2-dependencies-1.0.0-{{ checksum "/tmp/dependencies.cache.tmp" }}
 
-  test:
+  compile:
     docker:
       - image: circleci/openjdk:8-jdk
+        environment:
+          JAVA_OPTS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1'
+    environment:
+      # Customize the JVM maximum heap limit
+      JAVA_OPTS: -Xmx3200m
     working_directory: ~/workdir
     steps:
       - *restore_source_code
@@ -77,9 +92,21 @@ jobs:
             - ~/workdir/target
             - ~/workdir/project/target
           key: sbt-build-1.0.0-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Lint
-          command: ./scripts/lint.sh
+
+  test:
+    docker:
+      - image: circleci/openjdk:8-jdk
+        environment:
+          JAVA_OPTS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1'
+    environment:
+      # Customize the JVM maximum heap limit
+      JAVA_OPTS: -Xmx3200m
+    working_directory: ~/workdir
+    steps:
+      - *restore_source_code
+      - *setup_dependencies_key
+      - *restore_dependencies
+      - *restore_build
       - run:
           name: Test
           command: ./scripts/test.sh
@@ -98,9 +125,14 @@ jobs:
       - store_artifacts:
           path: ~/workdir/target/scala-2.12/scoverage-data
 
-  publish:
+  lint:
     docker:
       - image: circleci/openjdk:8-jdk
+        environment:
+          JAVA_OPTS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1'
+    environment:
+      # Customize the JVM maximum heap limit
+      JAVA_OPTS: -Xmx3200m
     working_directory: ~/workdir
     steps:
       - *restore_source_code
@@ -108,8 +140,26 @@ jobs:
       - *restore_dependencies
       - *restore_build
       - run:
-          name: Publish
-          command: ./scripts/publish.sh
+          name: Lint
+          command: ./scripts/lint.sh
+
+  publish:
+    docker:
+      - image: circleci/openjdk:8-jdk
+        environment:
+          JAVA_OPTS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1'
+    environment:
+      # Customize the JVM maximum heap limit
+      JAVA_OPTS: -Xmx3200m
+    working_directory: ~/workdir
+    steps:
+      - *restore_source_code
+      - *setup_dependencies_key
+      - *restore_dependencies
+      - *restore_build
+      - run:
+          name: Publish to JCenter
+          command: ./scripts/publish.sh 0.1.$CIRCLE_BUILD_NUM
 
 workflows:
   version: 2
@@ -119,14 +169,21 @@ workflows:
       - sbt_dependencies:
           requires:
             - checkout_code
-      - test:
+      - compile:
           requires:
             - checkout_code
             - sbt_dependencies
+      - test:
+          requires:
+            - compile
+      - lint:
+          requires:
+            - compile
       - publish:
           type: approval
           requires:
             - test
+            - lint
           filters:
             branches:
               only:
