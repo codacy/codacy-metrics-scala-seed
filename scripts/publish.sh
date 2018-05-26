@@ -17,6 +17,7 @@ fi
 echo "Publishing version ${VERSION}"
 if [[ -n "$CI" ]] && [[ "$CURRENT_BRANCH" == "$PUBLISH_BRANCH" || "$CIRCLE_BRANCH" == "$PUBLISH_BRANCH" ]]; then
   sbt 'set version := "'"${VERSION}"'"' publish
+  sbt 'set version := "'"${VERSION}"'"' sonatypeRelease
 else
   sbt 'set version := "'"${VERSION}"'"' publishLocal
 fi

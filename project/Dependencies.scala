@@ -7,6 +7,6 @@ object Dependencies {
   val betterFiles = "com.github.pathikrit" %% "better-files" % "3.4.0"
 
   val specs2Version = "4.2.0"
-  lazy val specs2 = Seq("org.specs2" %% "specs2-core" % specs2Version, "org.specs2" %% "specs2-mock" % specs2Version)
+  lazy val specs2 = Seq("org.specs2" %% "specs2-core" % specs2Version)
 
 }

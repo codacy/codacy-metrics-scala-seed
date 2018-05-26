@@ -3,6 +3,22 @@ version: 2
 
 # Re-usable blocks to reduce boilerplate in job definitions.
 references:
+  host_environment_defaults: &host_environment_defaults
+    # Customize the JVM maximum heap limit
+    JAVA_OPTS: -Xmx3200m
+  docker_environment_defaults: &docker_environment_defaults
+    # Customize the JVM to read correct memory values
+    JAVA_OPTS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1'
+
+  default_java_job: &default_java_job
+    docker:
+      - image: circleci/openjdk:8-jdk
+        environment:
+          <<: *docker_environment_defaults
+    environment:
+      <<: *host_environment_defaults
+    working_directory: ~/workdir
+
   restore_source_code: &restore_source_code
     restore_cache:
       keys:
@@ -14,6 +30,12 @@ references:
       keys:
         - sbt-ivy2-dependencies-1.0.0-{{ checksum "/tmp/dependencies.cache.tmp" }}
         - sbt-ivy2-dependencies-1.0.0
+  restore_build: &restore_build
+    restore_cache:
+      keys:
+        - sbt-build-1.0.0-{{ .Branch }}-{{ .Revision }}
+        - sbt-build-1.0.0
+
   setup_dependencies_key: &setup_dependencies_key
     run:
       name: Generate cache key
@@ -23,22 +45,10 @@ references:
           project/build.properties \
           project/Common.scala \
           project/Dependencies.scala > /tmp/dependencies.cache.tmp
-  restore_build: &restore_build
-    restore_cache:
-      keys:
-        - sbt-build-1.0.0-{{ .Branch }}-{{ .Revision }}
-        - sbt-build-1.0.0
 
 jobs:
   checkout_code:
-    docker:
-      - image: circleci/openjdk:8-jdk
-        environment:
-          JAVA_OPTS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1'
-    environment:
-      # Customize the JVM maximum heap limit
-      JAVA_OPTS: -Xmx3200m
-    working_directory: ~/workdir
+    <<: *default_java_job
     steps:
       - *restore_source_code
       - checkout
@@ -48,14 +58,7 @@ jobs:
             - ~/workdir
 
   sbt_dependencies:
-    docker:
-      - image: circleci/openjdk:8-jdk
-        environment:
-          JAVA_OPTS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1'
-    environment:
-      # Customize the JVM maximum heap limit
-      JAVA_OPTS: -Xmx3200m
-    working_directory: ~/workdir
+    <<: *default_java_job
     steps:
       - *restore_source_code
       - *setup_dependencies_key
@@ -71,14 +74,7 @@ jobs:
           key: sbt-ivy2-dependencies-1.0.0-{{ checksum "/tmp/dependencies.cache.tmp" }}
 
   compile:
-    docker:
-      - image: circleci/openjdk:8-jdk
-        environment:
-          JAVA_OPTS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1'
-    environment:
-      # Customize the JVM maximum heap limit
-      JAVA_OPTS: -Xmx3200m
-    working_directory: ~/workdir
+    <<: *default_java_job
     steps:
       - *restore_source_code
       - *setup_dependencies_key
@@ -94,14 +90,7 @@ jobs:
           key: sbt-build-1.0.0-{{ .Branch }}-{{ .Revision }}
 
   test:
-    docker:
-      - image: circleci/openjdk:8-jdk
-        environment:
-          JAVA_OPTS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1'
-    environment:
-      # Customize the JVM maximum heap limit
-      JAVA_OPTS: -Xmx3200m
-    working_directory: ~/workdir
+    <<: *default_java_job
     steps:
       - *restore_source_code
       - *setup_dependencies_key
@@ -126,14 +115,7 @@ jobs:
           path: ~/workdir/target/scala-2.12/scoverage-data
 
   lint:
-    docker:
-      - image: circleci/openjdk:8-jdk
-        environment:
-          JAVA_OPTS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1'
-    environment:
-      # Customize the JVM maximum heap limit
-      JAVA_OPTS: -Xmx3200m
-    working_directory: ~/workdir
+    <<: *default_java_job
     steps:
       - *restore_source_code
       - *setup_dependencies_key
@@ -144,21 +126,14 @@ jobs:
           command: ./scripts/lint.sh
 
   publish:
-    docker:
-      - image: circleci/openjdk:8-jdk
-        environment:
-          JAVA_OPTS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1'
-    environment:
-      # Customize the JVM maximum heap limit
-      JAVA_OPTS: -Xmx3200m
-    working_directory: ~/workdir
+    <<: *default_java_job
     steps:
       - *restore_source_code
       - *setup_dependencies_key
       - *restore_dependencies
       - *restore_build
       - run:
-          name: Publish to JCenter
+          name: Publish to Sonatype
           command: ./scripts/publish.sh 0.1.$CIRCLE_BUILD_NUM
 
 workflows:
