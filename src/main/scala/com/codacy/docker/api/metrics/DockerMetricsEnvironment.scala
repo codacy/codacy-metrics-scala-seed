@@ -4,9 +4,8 @@ import better.files._
 import codacy.docker.api.MetricsConfiguration
 import play.api.libs.json.{JsError, JsPath, Json, JsonValidationError}
 
-import scala.concurrent.duration.{Duration, FiniteDuration}
+import scala.concurrent.duration.{Duration, FiniteDuration, _}
 import scala.util.{Failure, Success, Try}
-import scala.concurrent.duration._
 
 class DockerMetricsEnvironment(variables: Map[String, String] = sys.env) {
 

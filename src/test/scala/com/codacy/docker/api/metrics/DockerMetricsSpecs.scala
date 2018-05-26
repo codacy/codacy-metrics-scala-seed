@@ -46,8 +46,8 @@ class DockerMetricsSpecs extends Specification {
       dockerMetrics.main(Array.empty)
 
       //then
-      Json.parse(outContent.toString) mustEqual Json.toJson(
-        fileMetrics.copy(filename = FileHelper.stripPath(fileName, sourcePath)))
+      Json.parse(outContent.toString) must beEqualTo(
+        Json.toJson(fileMetrics.copy(filename = FileHelper.stripPath(fileName, sourcePath))))
     }
 
     "fail if the apply method fails, print the stacktrace to the given stream and exit with the code 1" in {

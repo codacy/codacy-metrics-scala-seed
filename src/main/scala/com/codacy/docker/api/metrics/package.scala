@@ -29,6 +29,7 @@ package object metrics {
     }
   }
 
+  @SuppressWarnings(Array("UnusedMethodParameter"))
   implicit class ConfigurationExtensions(config: MetricsConfiguration.type) {
     def Value(jsValue: JsValue): MetricsConfiguration.Value =
       MetricsConfigurationValue(jsValue)
@@ -68,4 +69,4 @@ package object metrics {
     Json.format[MetricsConfiguration]
 }
 
-private[this] case class MetricsConfigurationValue(value: JsValue) extends AnyVal with MetricsConfiguration.Value
+private[this] final case class MetricsConfigurationValue(value: JsValue) extends AnyVal with MetricsConfiguration.Value

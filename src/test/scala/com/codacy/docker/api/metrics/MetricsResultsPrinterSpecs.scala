@@ -25,8 +25,8 @@ class MetricsResultsPrinterSpecs extends Specification {
       printer.printResults(List(fileMetrics), sourcePath)
 
       //then
-      Json.parse(outContent.toString) mustEqual Json.toJson(
-        fileMetrics.copy(filename = FileHelper.stripPath(fileName, sourcePath)))
+      Json.parse(outContent.toString) must beEqualTo(
+        Json.toJson(fileMetrics.copy(filename = FileHelper.stripPath(fileName, sourcePath))))
     }
   }
 }
