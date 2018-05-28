@@ -7,7 +7,8 @@ import scala.collection.mutable
 import scala.io.{Codec, Source}
 import scala.sys.process._
 import scala.util.{Failure, Success, Try}
-case class CommandResult(exitCode: Int, stdout: List[String], stderr: List[String])
+
+final case class CommandResult(exitCode: Int, stdout: List[String], stderr: List[String])
 
 object CommandRunner {
 

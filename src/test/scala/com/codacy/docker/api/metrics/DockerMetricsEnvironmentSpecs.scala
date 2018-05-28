@@ -28,7 +28,9 @@ class DockerMetricsEnvironmentSpecs extends Specification {
           dockerMetricsEnvironment.getConfiguration(tempFile, tempFile.parent)
 
         //then
+        // scalafix:off NoInfer.any
         metricsConfig must beSuccessfulTry[Option[MetricsConfiguration]](Some(metricsConfiguration))
+        // scalafix:on NoInfer.any
       }).get()
     }
 
@@ -58,7 +60,9 @@ class DockerMetricsEnvironmentSpecs extends Specification {
         dockerMetricsEnvironment.getConfiguration(nonExistentFile, srcFolder)
 
       //then
-      metricsConfig must beSuccessfulTry[Option[MetricsConfiguration]](Option.empty)
+      // scalafix:off NoInfer.any
+      metricsConfig must beSuccessfulTry[Option[MetricsConfiguration]](Option.empty[MetricsConfiguration])
+      // scalafix:on NoInfer.any
     }
   }
 }

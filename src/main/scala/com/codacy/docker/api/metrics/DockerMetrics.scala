@@ -45,6 +45,7 @@ abstract class DockerMetrics(metricsTool: MetricsTool,
     resultsPrinter.log(s"[DockerMetrics] $message")
   }
 
+  @SuppressWarnings(Array("CatchThrowable"))
   private def withNativeTry[T](block: => Try[T]): Try[T] = {
     try {
       block

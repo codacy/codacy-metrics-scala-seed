@@ -29,6 +29,7 @@ package object metrics {
     }
   }
 
+  @SuppressWarnings(Array("UnusedMethodParameter"))
   implicit class ConfigurationExtensions(config: MetricsConfiguration.type) {
     def Value(jsValue: JsValue): MetricsConfiguration.Value =
       MetricsConfigurationValue(jsValue)
@@ -55,8 +56,9 @@ package object metrics {
           })
       },
       Writes(m =>
-        JsObject(m.map {
-          case (k, v: MetricsConfigurationValue) => k.value -> v.value
+        JsObject(m.flatMap {
+          case (k, v: MetricsConfigurationValue) => Option(k.value -> v.value)
+          case _                                 => Option.empty[(String, JsValue)]
         })))
 
   implicit val lineComplexityFormat: OFormat[LineComplexity] =
@@ -67,4 +69,4 @@ package object metrics {
     Json.format[MetricsConfiguration]
 }
 
-private[this] case class MetricsConfigurationValue(value: JsValue) extends AnyVal with MetricsConfiguration.Value
+private[this] final case class MetricsConfigurationValue(value: JsValue) extends AnyVal with MetricsConfiguration.Value

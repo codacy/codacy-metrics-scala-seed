@@ -1,33 +1,42 @@
-import sbt.Keys._
 import sbt._
-name := """codacy-metrics-scala-seed"""
+import sbt.Keys._
 
-organization := "com.codacy"
+val scalaBinaryVersionNumber = "2.12"
+val scalaVersionNumber = s"$scalaBinaryVersionNumber.4"
 
-version := "1.0.0-SNAPSHOT"
+lazy val codacyMetricsScalaSeed = project
+  .in(file("."))
+  .settings(
+    inThisBuild(
+      List(organization := "com.codacy",
+           scalaVersion := scalaVersionNumber,
+           version := "0.1.0-SNAPSHOT",
+           scalacOptions ++= Common.compilerFlags,
+           scalacOptions in Test ++= Seq("-Yrangepos"),
+           scalacOptions in (Compile, console) --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings"))),
+    name := "codacy-metrics-scala-seed",
+    // App Dependencies
+    libraryDependencies ++= Seq(Dependencies.playJson, Dependencies.codacyPluginsApi, Dependencies.betterFiles),
+    // Test Dependencies
+    libraryDependencies ++= Dependencies.specs2.map(_ % Test))
+  .settings(Common.genericSettings: _*)
 
-scalaVersion := "2.12.6"
+// Scapegoat
+scalaVersion in ThisBuild := scalaVersionNumber
+scalaBinaryVersion in ThisBuild := scalaBinaryVersionNumber
+scapegoatDisabledInspections in ThisBuild := Seq()
+scapegoatVersion in ThisBuild := "1.3.5"
 
-scalacOptions := Seq("-deprecation", "-feature", "-unchecked", "-Xlint", "-Ywarn-adapted-args")
-resolvers += "Bintray Typesafe Repo" at "http://dl.bintray.com/typesafe/maven-releases/"
-
-libraryDependencies ++= Seq("com.typesafe.play" %% "play-json" % "2.6.9",
-                            "com.codacy" %% "codacy-plugins-api" % "2.1.1" withSources (),
-                            "com.github.pathikrit" %% "better-files" % "3.4.0",
-                            "org.specs2" %% "specs2-core" % "4.2.0" % "test")
-
-organizationName := "Codacy"
-
-organizationHomepage := Some(new URL("https://www.codacy.com"))
-
+// Sonatype repository settings
+credentials += Credentials("Sonatype Nexus Repository Manager",
+                           "oss.sonatype.org",
+                           sys.env.getOrElse("SONATYPE_USER", "username"),
+                           sys.env.getOrElse("SONATYPE_PASSWORD", "password"))
 publishMavenStyle := true
-
 publishArtifact in Test := false
-
 pomIncludeRepository := { _ =>
   false
 }
-
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
   if (version.value.trim.endsWith("SNAPSHOT"))
@@ -36,14 +45,12 @@ publishTo := {
     Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 
+organizationName := "Codacy"
+organizationHomepage := Some(new URL("https://www.codacy.com"))
 startYear := Some(2018)
-
 description := "Library to develop Codacy metrics plugins"
-
-licenses := Seq("The Apache Software License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
-
+licenses := Seq("AGPL-3.0" -> url("https://opensource.org/licenses/AGPL-3.0"))
 homepage := Some(url("http://www.github.com/codacy/codacy-metrics-scala-seed/"))
-
 pomExtra :=
   <scm>
     <url>http://www.github.com/codacy/codacy-metrics-scala-seed</url>
