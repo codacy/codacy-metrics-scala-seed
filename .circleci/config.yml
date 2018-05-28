@@ -154,11 +154,18 @@ workflows:
       - lint:
           requires:
             - compile
-      - publish:
+      - publish_hold:
           type: approval
           requires:
             - test
             - lint
+          filters:
+            branches:
+              only:
+                - master
+      - publish:
+          requires:
+            - publish_hold
           filters:
             branches:
               only:
