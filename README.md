@@ -3,7 +3,7 @@
 [![Codacy Code Quality Badge](https://api.codacy.com/project/badge/Grade/84f9864f373e4228b8c030d583bd4094)](https://www.codacy.com/app/Codacy/codacy-metrics-scala-seed?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=codacy/codacy-metrics-scala-seed&amp;utm_campaign=Badge_Grade)
 [![Codacy Code Coverage Badge](https://api.codacy.com/project/badge/Coverage/84f9864f373e4228b8c030d583bd4094)](https://www.codacy.com/app/Codacy/codacy-metrics-scala-seed?utm_source=github.com&utm_medium=referral&utm_content=codacy/codacy-metrics-scala-seed&utm_campaign=Badge_Coverage)
 [![CircleCI](https://circleci.com/gh/codacy/codacy-metrics-scala-seed.svg?style=svg)](https://circleci.com/gh/codacy/codacy-metrics-scala-seed)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.codacy/codacy-metrics-scala-seed/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.codacy/codacy-metrics-scala-seed)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.codacy/codacy-metrics-scala-seed_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.codacy/codacy-metrics-scala-seed_2.12)
 
 Framework to help integration with external metrics tools at Codacy.
 
