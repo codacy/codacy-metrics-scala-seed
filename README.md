@@ -52,6 +52,11 @@ You are free to modify and use it for your own tools.
 }
 ```
 
+* The exit codes can be different, depending if the tool invocation is successful or not:
+  * *0* If the tool executes successfully
+  * *1* If an unknown error occurs while running the tool 
+  * *2* If there's an execution timeout
+  
 ** Notes: **
 
 * To run the tool in debug mode so you can have more detailed logs, you have just need to set the environment variable `METRICS_DEBUG` to `true` when invoking the docker.
