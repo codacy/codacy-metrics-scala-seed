@@ -59,8 +59,8 @@ You are free to modify and use it for your own tools.
   
 ** Notes: **
 
-* To run the tool in debug mode so you can have more detailed logs, you have just need to set the environment variable `METRICS_DEBUG` to `true` when invoking the docker.
-* To configure a different timeout for the tool you have to set the environment variable `METRICS_TIMEOUT` when invoking the docker, setting it with values like `10 seconds`, `30 minutes` or `2 hours`.
+* To run the tool in debug mode, so you can have more detailed logs, you need to set the environment variable `METRICS_DEBUG` to `true` when invoking the docker.
+* To configure a different timeout for the tool, you have to set the environment variable `METRICS_TIMEOUT` when invoking the docker, setting it with values like `10 seconds`, `30 minutes` or `2 hours`.
 
 #### Output
 
