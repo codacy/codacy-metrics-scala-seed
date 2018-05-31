@@ -53,9 +53,9 @@ You are free to modify and use it for your own tools.
 ```
 
 * The exit codes can be different, depending if the tool invocation is successful or not:
-  * *0* If the tool executes successfully
-  * *1* If an unknown error occurs while running the tool 
-  * *2* If there's an execution timeout
+  * :tada: **0**: The tool executed successfully
+  * :cold_sweat: **1**: An unknown error occurred while running the tool 
+  * :alarm_clock: **2**: Execution timeout
   
 ** Notes: **
 
