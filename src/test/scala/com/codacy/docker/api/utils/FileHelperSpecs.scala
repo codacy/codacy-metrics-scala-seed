@@ -1,5 +1,7 @@
 package com.codacy.docker.api.utils
 
+import java.nio.file.Path
+
 import org.specs2.mutable.Specification
 
 class FileHelperSpecs extends Specification {
@@ -62,7 +64,8 @@ class FileHelperSpecs extends Specification {
         val configFile =
           FileHelper.findConfigurationFile(Set(firstConfig.name, secondConfig.name), parentConfigFolder.path)
 
-        configFile must beSome(firstConfig.path)
+        configFile must beSome[Path]
+        configFile must beLike { case Some(path) => path must beEqualTo(firstConfig.path) }
       }).get()
     }
 
@@ -75,7 +78,8 @@ class FileHelperSpecs extends Specification {
         val configFile =
           FileHelper.findConfigurationFile(Set(cfgFile.name), parentConfigFolder.path)
 
-        configFile must beSome(cfgFile.path)
+        configFile must beSome[Path]
+        configFile must beLike { case Some(path) => path must beEqualTo(cfgFile.path) }
       }).get()
     }
 
