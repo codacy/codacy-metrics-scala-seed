@@ -33,7 +33,7 @@ object FileHelper {
 
   def findConfigurationFile(candidates: Set[String], path: Path): Option[Path] = {
     candidates.flatMap { nativeConfigFileName =>
-      better.files.File(path).listRecursively.filter(f => f.name == nativeConfigFileName).map(_.path)
+      listAllFiles(path).filter(_.getName == nativeConfigFileName).map(_.toPath)
     }.to[List].sortBy(_.toString.length).headOption
   }
 
