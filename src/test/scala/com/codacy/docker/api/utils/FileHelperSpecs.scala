@@ -1,5 +1,7 @@
 package com.codacy.docker.api.utils
 
+import java.nio.file.Path
+
 import org.specs2.mutable.Specification
 
 class FileHelperSpecs extends Specification {
@@ -51,5 +53,35 @@ class FileHelperSpecs extends Specification {
       fileTmp must endWith(".ext")
       scala.io.Source.fromFile(fileTmp).mkString must beEqualTo("foo")
     }
+
+    "find the first configuration file relative to a path, given a set of candidates" in {
+      (for {
+        parentConfigFolder <- better.files.File.temporaryDirectory("firstTestConfigFolder")
+        childConfigFolder <- better.files.File.temporaryDirectory("secondTestConfigFolder", Some(parentConfigFolder))
+        firstConfig <- better.files.File.temporaryFile("firstConf", ".codacyrc", Some(parentConfigFolder))
+        secondConfig <- better.files.File.temporaryFile("secondConf", ".codacyrc", Some(childConfigFolder))
+      } yield {
+        val configFile =
+          FileHelper.findConfigurationFile(Set(firstConfig.name, secondConfig.name), parentConfigFolder.path)
+
+        configFile must beSome[Path]
+        configFile must beLike { case Some(path) => path must beEqualTo(firstConfig.path) }
+      }).get()
+    }
+
+    "find the configuration file relative to a path, even if the candidate it's in a subdirectory" in {
+      (for {
+        parentConfigFolder <- better.files.File.temporaryDirectory("firstTestConfigFolder")
+        childConfigFolder <- better.files.File.temporaryDirectory("secondTestConfigFolder", Some(parentConfigFolder))
+        cfgFile <- better.files.File.temporaryFile("conf", ".codacyrc", Some(childConfigFolder))
+      } yield {
+        val configFile =
+          FileHelper.findConfigurationFile(Set(cfgFile.name), parentConfigFolder.path)
+
+        configFile must beSome[Path]
+        configFile must beLike { case Some(path) => path must beEqualTo(cfgFile.path) }
+      }).get()
+    }
+
   }
 }
