@@ -69,7 +69,7 @@ class FileHelperSpecs extends Specification {
       }).get()
     }
 
-    "find the configuration file relative to a path, event if the candidate it's in a subdirectory" in {
+    "find the configuration file relative to a path, even if the candidate it's in a subdirectory" in {
       (for {
         parentConfigFolder <- better.files.File.temporaryDirectory("firstTestConfigFolder")
         childConfigFolder <- better.files.File.temporaryDirectory("secondTestConfigFolder", Some(parentConfigFolder))
