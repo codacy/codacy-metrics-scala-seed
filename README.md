@@ -54,13 +54,13 @@ You are free to modify and use it for your own tools.
 
 * The exit codes can be different, depending if the tool invocation is successful or not:
   * :tada: **0**: The tool executed successfully
-  * :cold_sweat: **1**: An unknown error occurred while running the tool 
+  * :cold_sweat: **1**: An unknown error occurred while running the tool
   * :alarm_clock: **2**: Execution timeout
-  
+
 ** Notes: **
 
-* To run the tool in debug mode, so you can have more detailed logs, you need to set the environment variable `METRICS_DEBUG` to `true` when invoking the docker.
-* To configure a different timeout for the tool, you have to set the environment variable `METRICS_TIMEOUT` when invoking the docker, setting it with values like `10 seconds`, `30 minutes` or `2 hours`.
+* To run the tool in debug mode, so you can have more detailed logs, you need to set the environment variable `DEBUG` to `true` when invoking the docker.
+* To configure a different timeout for the tool, you have to set the environment variable `TIMEOUT` when invoking the docker, setting it with values like `10seconds`, `30minutes` or `2hours`.
 
 #### Output
 
@@ -77,7 +77,7 @@ After you have your results from the tool, you should print them to the standard
   "nrClasses": 2,
   "lineComplexities": [
     {
-      "line": 2, 
+      "line": 2,
       "value": 3
     }
   ]
