@@ -30,15 +30,15 @@ class DockerMetricsEnvironment(variables: Map[String, String] = sys.env) {
 
   lazy val timeout: FiniteDuration =
     variables
-      .get("METRICS_TIMEOUT")
+      .get("TIMEOUT")
       .flatMap(rawDuration =>
         Try(Duration(rawDuration)).toOption.collect {
           case d: FiniteDuration => d
       })
-      .getOrElse(10.minutes)
+      .getOrElse(15.minutes)
 
   lazy val isDebug: Boolean =
-    variables.get("METRICS_DEBUG").flatMap(rawDebug => Try(rawDebug.toBoolean).toOption).getOrElse(false)
+    variables.get("DEBUG").flatMap(rawDebug => Try(rawDebug.toBoolean).toOption).getOrElse(false)
 
   private def asFailure[T](error: Seq[(JsPath, Seq[JsonValidationError])]): Try[T] =
     Failure[T](new Throwable(Json.stringify(JsError.toJson(error.toList))))
