@@ -1,4 +1,4 @@
-package com.codacy.docker.api.utils
+package com.codacy.metrics.scala.seed.utils
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Path, StandardOpenOption}

@@ -1,7 +1,8 @@
-package com.codacy.docker.api.utils
+package com.codacy.metrics.scala.seed.traits
 
 import java.nio.file.Path
 
+import com.codacy.metrics.scala.seed.utils.FileHelper
 import org.specs2.mutable.Specification
 
 class FileHelperSpecs extends Specification {

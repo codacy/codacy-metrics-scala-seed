@@ -1,15 +1,15 @@
-package com.codacy.docker.api.utils
+package com.codacy.metrics.scala.seed.traits
 
 import org.specs2.mutable.Specification
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, TimeoutException}
 
-class DelayedSpecs extends Specification with Delayed {
+class TimeoutableSpecs extends Specification with Timeoutable {
 
-  "Delayed" should {
+  "Timeoutable" should {
     "should throw exception" in {
-      val f = delay(100.seconds) {
+      val f = timeout(100.seconds) {
         failure("It should fail because a timeoutException wasn't thrown.")
       }
 
@@ -17,7 +17,7 @@ class DelayedSpecs extends Specification with Delayed {
     }
 
     "shouldn't throw exception" in {
-      val f = delay(1.seconds) {
+      val f = timeout(1.seconds) {
         success("The delay didn't throw a TimeoutException exception")
       }
 
