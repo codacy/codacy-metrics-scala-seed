@@ -1,4 +1,4 @@
-package com.codacy.docker.api.utils
+package com.codacy.metrics.scala.seed.traits
 
 import java.util.{Timer, TimerTask}
 
@@ -6,9 +6,9 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Future, Promise}
 import scala.util.Try
 
-trait Delayed {
+trait Timeoutable {
 
-  def delay[T](delay: Duration)(block: => T): Future[T] = {
+  def timeout[T](delay: Duration)(block: => T): Future[T] = {
     val promise = Promise[T]()
     val t = new Timer()
     t.schedule(new TimerTask {

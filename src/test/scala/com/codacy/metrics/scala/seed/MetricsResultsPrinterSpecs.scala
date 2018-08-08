@@ -1,9 +1,10 @@
-package com.codacy.docker.api.metrics
+package com.codacy.metrics.scala.seed
 
 import java.io.{ByteArrayOutputStream, PrintStream}
 
-import codacy.docker.api.metrics.{FileMetrics, LineComplexity}
-import com.codacy.docker.api.utils.FileHelper
+import com.codacy.metrics.scala.seed.utils.FileHelper
+import com.codacy.plugins.api.docker.v2.MetricsResult
+import com.codacy.plugins.api.Implicits._
 import org.specs2.mutable.Specification
 import play.api.libs.json.Json
 
@@ -17,16 +18,16 @@ class MetricsResultsPrinterSpecs extends Specification {
       val printer = new MetricsResultsPrinter(printStream)
       val dockerMetricsEnvironment = new DockerMetricsEnvironment(Map.empty)
       val fileName = "a.scala"
-      val sourcePath = dockerMetricsEnvironment.sourcePath.pathAsString
+      val sourcePath = dockerMetricsEnvironment.sourcePath
       val fileMetrics =
-        FileMetrics(s"$sourcePath/$fileName", Some(1), Some(399), Some(23), Some(3), Some(2), Set(LineComplexity(1, 2)))
+        MetricsResult.FileMetrics(s"$sourcePath/$fileName", Some(1), Some(399), Some(23), Some(3), Some(2), Set(MetricsResult.LineComplexity(1, 2)))
 
       //when
-      printer.printResults(List(fileMetrics), sourcePath)
+      printer.printResults(List(fileMetrics), sourcePath.toString)
 
       //then
       Json.parse(outContent.toString) must beEqualTo(
-        Json.toJson(fileMetrics.copy(filename = FileHelper.stripPath(fileName, sourcePath))))
+        Json.toJson(fileMetrics.copy(filename = FileHelper.stripPath(fileName, sourcePath.toString))))
     }
   }
 }

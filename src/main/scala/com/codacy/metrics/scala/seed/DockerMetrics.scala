@@ -1,27 +1,28 @@
-package com.codacy.docker.api.metrics
+package com.codacy.metrics.scala.seed
 
-import codacy.docker.api.Source
-import codacy.docker.api.metrics.{FileMetrics, MetricsTool}
-import com.codacy.docker.api.utils.{Delayed, Halted}
+import com.codacy.metrics.scala.seed.traits.{Haltable, Timeoutable}
+import com.codacy.plugins.api.Source
+import com.codacy.plugins.api.docker.v2.MetricsResult
+import com.codacy.plugins.api.metrics.MetricsTool
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
-abstract class DockerMetrics(metricsTool: MetricsTool,
+abstract class DockerMetrics(metricsTool: MetricsTool[MetricsResult],
                              environment: DockerMetricsEnvironment = new DockerMetricsEnvironment(),
                              resultsPrinter: MetricsResultsPrinter = new MetricsResultsPrinter())
-    extends Delayed
-    with Halted {
+    extends Timeoutable
+    with Haltable {
 
   def main(args: Array[String]): Unit = {
     initTimeout
-    lazy val sourcePathStr = environment.sourcePath.pathAsString
+    lazy val sourcePathStr = environment.sourcePath.toString
     (for {
       config <- environment.getConfiguration()
-      res <- withNativeTry[List[FileMetrics]](
+      res <- withNativeTry[List[MetricsResult]](
         metricsTool.apply(Source.Directory(sourcePathStr),
-                          config.flatMap(_.language),
-                          config.flatMap(_.files),
-                          config.flatMap(_.options).getOrElse(Map.empty)))
+                          config.language,
+                          config.files,
+                          config.options.getOrElse(Map.empty)))
     } yield res) match {
       case Success(results) =>
         log("receiving metrics results")
@@ -35,7 +36,7 @@ abstract class DockerMetrics(metricsTool: MetricsTool,
   }
 
   private def initTimeout: Future[Unit] = {
-    delay(environment.timeout) {
+    timeout(environment.timeout) {
       log(s"timed out after ${environment.timeout} ")
       halt(2)
     }

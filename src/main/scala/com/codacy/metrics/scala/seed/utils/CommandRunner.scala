@@ -1,4 +1,4 @@
-package com.codacy.docker.api.utils
+package com.codacy.metrics.scala.seed.utils
 
 import java.io._
 import java.nio.charset.CodingErrorAction
