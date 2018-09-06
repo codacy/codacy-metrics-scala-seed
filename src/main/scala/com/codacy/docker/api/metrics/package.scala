@@ -1,8 +1,8 @@
 package com.codacy.docker.api
 
-import codacy.docker.api.metrics.{FileMetrics, LineComplexity}
-import codacy.docker.api.{MetricsConfiguration, Source}
-import com.codacy.api.dtos.{Language, Languages}
+import com.codacy.plugins.api.languages.{Language, Languages}
+import com.codacy.plugins.api.metrics.{FileMetrics, LineComplexity, MetricsTool}
+import com.codacy.plugins.api.{Options, Source}
 import play.api.libs.json._
 
 import scala.language.implicitConversions
@@ -19,54 +19,53 @@ package object metrics {
     },
     Writes((v: Language) => JsString(v.name)))
 
-  implicit val fileFormat: OFormat[Source.File] =
-    Json.format[codacy.docker.api.Source.File]
+  implicit lazy val sourceFileFormat: Format[Source.File] =
+    Format(Reads.StringReads.map(Source.File), Writes((v: Source.File) => Json.toJson(v.path)))
 
-  implicit def configurationValueToJsValue(configValue: MetricsConfiguration.Value): JsValue = {
+  implicit def configurationValueToJsValue(configValue: Options.Value): JsValue = {
     configValue match {
-      case MetricsConfigurationValue(v) => v
-      case _                            => JsNull
+      case OptionsValue(v) => v
+      case _               => JsNull
     }
   }
 
   @SuppressWarnings(Array("UnusedMethodParameter"))
-  implicit class ConfigurationExtensions(config: MetricsConfiguration.type) {
-    def Value(jsValue: JsValue): MetricsConfiguration.Value =
-      MetricsConfigurationValue(jsValue)
+  implicit class ConfigurationExtensions(config: Options.type) {
+    def Value(jsValue: JsValue): Options.Value =
+      OptionsValue(jsValue)
 
-    def Value(raw: String): MetricsConfiguration.Value =
+    def Value(raw: String): Options.Value =
       Value(Try(Json.parse(raw)).getOrElse(JsString(raw)))
   }
 
-  implicit lazy val configurationValueFormat: Format[MetricsConfiguration.Value] =
-    Format(implicitly[Reads[JsValue]].map(MetricsConfiguration.Value), Writes(configurationValueToJsValue))
+  implicit lazy val configurationValueFormat: Format[Options.Value] =
+    Format(implicitly[Reads[JsValue]].map(Options.Value), Writes(configurationValueToJsValue))
 
-  implicit lazy val configurationOptionsKeyFormat: OFormat[MetricsConfiguration.Key] =
-    Json.format[MetricsConfiguration.Key]
+  implicit lazy val configurationOptionsKeyFormat: OFormat[Options.Key] =
+    Json.format[Options.Key]
 
-  implicit lazy val configurationOptionsFormat: Format[Map[MetricsConfiguration.Key, MetricsConfiguration.Value]] =
-    Format[Map[MetricsConfiguration.Key, MetricsConfiguration.Value]](
+  implicit lazy val configurationOptionsFormat: Format[Map[Options.Key, Options.Value]] =
+    Format[Map[Options.Key, Options.Value]](
       Reads { json: JsValue =>
-        JsSuccess(
-          json.asOpt[Map[String, JsValue]].fold(Map.empty[MetricsConfiguration.Key, MetricsConfiguration.Value]) {
-            _.map {
-              case (k, v) =>
-                MetricsConfiguration.Key(k) -> MetricsConfiguration.Value(v)
-            }
-          })
+        JsSuccess(json.asOpt[Map[String, JsValue]].fold(Map.empty[Options.Key, Options.Value]) {
+          _.map {
+            case (k, v) =>
+              Options.Key(k) -> Options.Value(v)
+          }
+        })
       },
       Writes(m =>
         JsObject(m.flatMap {
-          case (k, v: MetricsConfigurationValue) => Option(k.value -> v.value)
-          case _                                 => Option.empty[(String, JsValue)]
+          case (k, v: OptionsValue) => Option(k.value -> v.value)
+          case _                    => Option.empty[(String, JsValue)]
         })))
 
   implicit val lineComplexityFormat: OFormat[LineComplexity] =
     Json.format[LineComplexity]
   implicit val fileMetricsFormat: OFormat[FileMetrics] =
     Json.format[FileMetrics]
-  implicit val metricsConfigurationFormat: OFormat[MetricsConfiguration] =
-    Json.format[MetricsConfiguration]
+  implicit val metricsConfigurationFormat: OFormat[MetricsTool.CodacyConfiguration] =
+    Json.format[MetricsTool.CodacyConfiguration]
 }
 
-private[this] final case class MetricsConfigurationValue(value: JsValue) extends AnyVal with MetricsConfiguration.Value
+private[this] final case class OptionsValue(value: JsValue) extends AnyVal with Options.Value

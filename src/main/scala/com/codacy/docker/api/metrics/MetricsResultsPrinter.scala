@@ -2,8 +2,8 @@ package com.codacy.docker.api.metrics
 
 import java.io.PrintStream
 
-import codacy.docker.api.metrics.FileMetrics
 import com.codacy.docker.api.utils.FileHelper
+import com.codacy.plugins.api.metrics.FileMetrics
 import play.api.libs.json.Json
 
 class MetricsResultsPrinter(resultsStream: PrintStream = Console.out, logStream: PrintStream = Console.err) {

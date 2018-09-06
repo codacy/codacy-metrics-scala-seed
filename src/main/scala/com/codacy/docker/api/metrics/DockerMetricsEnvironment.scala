@@ -1,7 +1,9 @@
 package com.codacy.docker.api.metrics
 
+import java.nio.file.{Path, Paths}
+
 import better.files._
-import codacy.docker.api.MetricsConfiguration
+import com.codacy.plugins.api.metrics.MetricsTool
 import play.api.libs.json.{JsError, JsPath, Json, JsonValidationError}
 
 import scala.concurrent.duration.{Duration, FiniteDuration, _}
@@ -9,36 +11,35 @@ import scala.util.{Failure, Success, Try}
 
 class DockerMetricsEnvironment(variables: Map[String, String] = sys.env) {
 
-  lazy val configFilePath: File = File.root / ".codacyrc"
+  val defaultRootFile: Path = Paths.get("/src")
+  val defaultConfigFile: Path = Paths.get("/.codacyrc")
 
-  lazy val sourcePath: File = File("/src")
-
-  def getConfiguration(configFile: File = configFilePath,
-                       sourceDir: File = sourcePath): Try[Option[MetricsConfiguration]] = {
+  def configurations(rootFile: File = defaultRootFile,
+                     configFile: File = defaultConfigFile): Try[Option[MetricsTool.CodacyConfiguration]] = {
     if (configFile.exists) {
       for {
         content <- Try(configFile.byteArray)
         json <- Try(Json.parse(content))
-        cfg <- json.validate[MetricsConfiguration].fold(asFailure, Success.apply)
+        cfg <- json.validate[MetricsTool.CodacyConfiguration].fold(asFailure, Success.apply)
       } yield {
-        Some(cfg.copy(files = cfg.files.map(_.map(file => file.copy(path = (sourceDir / file.path).toString)))))
+        Option(cfg.copy(files = cfg.files.map(_.map(file => file.copy(path = (rootFile / file.path).toString)))))
       }
     } else {
-      Success(Option.empty[MetricsConfiguration])
+      Success(Option.empty[MetricsTool.CodacyConfiguration])
     }
   }
 
-  lazy val timeout: FiniteDuration =
+  val defaultTimeout: FiniteDuration =
     variables
       .get("TIMEOUT")
-      .flatMap(rawDuration =>
-        Try(Duration(rawDuration)).toOption.collect {
+      .flatMap(timeoutStrValue =>
+        Try(Duration(timeoutStrValue)).toOption.collect {
           case d: FiniteDuration => d
       })
       .getOrElse(15.minutes)
 
-  lazy val isDebug: Boolean =
-    variables.get("DEBUG").flatMap(rawDebug => Try(rawDebug.toBoolean).toOption).getOrElse(false)
+  val debug: Boolean =
+    variables.get("DEBUG").flatMap(debugStrValue => Try(debugStrValue.toBoolean).toOption).getOrElse(false)
 
   private def asFailure[T](error: Seq[(JsPath, Seq[JsonValidationError])]): Try[T] =
     Failure[T](new Throwable(Json.stringify(JsError.toJson(error.toList))))

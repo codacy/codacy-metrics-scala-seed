@@ -2,10 +2,10 @@ package com.codacy.docker.api.metrics
 
 import java.io.{ByteArrayOutputStream, PrintStream}
 
-import codacy.docker.api.metrics.{FileMetrics, MetricsTool}
-import codacy.docker.api.{MetricsConfiguration, Source}
-import com.codacy.api.dtos.Language
 import com.codacy.docker.api.utils.FileHelper
+import com.codacy.plugins.api.languages.Language
+import com.codacy.plugins.api.metrics.{FileMetrics, MetricsTool}
+import com.codacy.plugins.api.{Options, Source}
 import org.specs2.mutable.Specification
 import play.api.libs.json.Json
 
@@ -22,20 +22,18 @@ class DockerMetricsSpecs extends Specification {
       val printStream = new PrintStream(outContent)
       val dockerMetricsEnvironment = new DockerMetricsEnvironment(Map.empty)
       val fileName = "a.scala"
-      val sourcePath = dockerMetricsEnvironment.sourcePath.pathAsString
+      val sourcePath = dockerMetricsEnvironment.defaultRootFile.toString
       val fileMetrics = FileMetrics(fileName)
       val metricsTool = new MetricsTool {
-        override def apply(
-          source: Source.Directory,
-          language: Option[Language],
-          files: Option[Set[Source.File]],
-          options: Map[MetricsConfiguration.Key, MetricsConfiguration.Value]): Try[List[FileMetrics]] = {
+        override def apply(source: Source.Directory,
+                           language: Option[Language],
+                           files: Option[Set[Source.File]],
+                           options: Map[Options.Key, Options.Value]): Try[List[FileMetrics]] = {
           Success(List(fileMetrics))
         }
       }
       val dockerMetrics =
-        new DockerMetrics(metricsTool = metricsTool,
-                          resultsPrinter = new MetricsResultsPrinter(resultsStream = printStream)) {
+        new DockerMetrics(metricsTool = metricsTool)(printer = new MetricsResultsPrinter(resultsStream = printStream)) {
           override def halt(status: Int): Unit = {
             status must beEqualTo(0)
             ()
@@ -56,17 +54,15 @@ class DockerMetricsSpecs extends Specification {
       val printStream = new PrintStream(outContent)
       val failedMsg = s"Failed: ${Random.nextInt()}"
       val metricsTool = new MetricsTool {
-        override def apply(
-          source: Source.Directory,
-          language: Option[Language],
-          files: Option[Set[Source.File]],
-          options: Map[MetricsConfiguration.Key, MetricsConfiguration.Value]): Try[List[FileMetrics]] = {
+        override def apply(source: Source.Directory,
+                           language: Option[Language],
+                           files: Option[Set[Source.File]],
+                           options: Map[Options.Key, Options.Value]): Try[List[FileMetrics]] = {
           Failure(new Throwable(failedMsg))
         }
       }
       val dockerMetrics =
-        new DockerMetrics(metricsTool = metricsTool,
-                          resultsPrinter = new MetricsResultsPrinter(logStream = printStream)) {
+        new DockerMetrics(metricsTool = metricsTool)(printer = new MetricsResultsPrinter(logStream = printStream)) {
           override def halt(status: Int): Unit = {
             status must beEqualTo(1)
             ()
@@ -87,19 +83,18 @@ class DockerMetricsSpecs extends Specification {
       val timeOutValue = "2 seconds"
       val timeOutException = new TimeoutException(s"Metrics tool timed out after: $timeOutValue")
       val metricsTool = new MetricsTool {
-        override def apply(
-          source: Source.Directory,
-          language: Option[Language],
-          files: Option[Set[Source.File]],
-          options: Map[MetricsConfiguration.Key, MetricsConfiguration.Value]): Try[List[FileMetrics]] = {
+        override def apply(source: Source.Directory,
+                           language: Option[Language],
+                           files: Option[Set[Source.File]],
+                           options: Map[Options.Key, Options.Value]): Try[List[FileMetrics]] = {
           Thread.sleep(3.seconds.toMillis)
           Success(List.empty)
         }
       }
       val dockerMetrics =
         new DockerMetrics(metricsTool = metricsTool,
-                          resultsPrinter = new MetricsResultsPrinter(logStream = printStream),
-                          environment = new DockerMetricsEnvironment(Map("METRICS_TIMEOUT" -> timeOutValue))) {
+                          environment = new DockerMetricsEnvironment(Map("METRICS_TIMEOUT" -> timeOutValue)))(
+          printer = new MetricsResultsPrinter(logStream = printStream)) {
           override def halt(status: Int): Unit = {
             throw timeOutException
           }
