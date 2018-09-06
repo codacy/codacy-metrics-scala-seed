@@ -2,8 +2,8 @@ package com.codacy.docker.api.metrics
 
 import java.io.{ByteArrayOutputStream, PrintStream}
 
-import codacy.docker.api.metrics.{FileMetrics, LineComplexity}
 import com.codacy.docker.api.utils.FileHelper
+import com.codacy.plugins.api.metrics.{FileMetrics, LineComplexity}
 import org.specs2.mutable.Specification
 import play.api.libs.json.Json
 
@@ -17,7 +17,7 @@ class MetricsResultsPrinterSpecs extends Specification {
       val printer = new MetricsResultsPrinter(printStream)
       val dockerMetricsEnvironment = new DockerMetricsEnvironment(Map.empty)
       val fileName = "a.scala"
-      val sourcePath = dockerMetricsEnvironment.sourcePath.pathAsString
+      val sourcePath = dockerMetricsEnvironment.defaultRootFile.toString
       val fileMetrics =
         FileMetrics(s"$sourcePath/$fileName", Some(1), Some(399), Some(23), Some(3), Some(2), Set(LineComplexity(1, 2)))
 

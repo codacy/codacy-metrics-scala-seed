@@ -21,10 +21,4 @@ object FileHelper {
     filename.stripPrefix(prefix).stripPrefix("/")
   }
 
-  def findConfigurationFile(candidates: Set[String], path: Path): Option[Path] = {
-    candidates.flatMap { nativeConfigFileName =>
-      File(path).listRecursively.filter(_.name == nativeConfigFileName).map(_.path)
-    }.to[List].sortBy(_.toString.length).headOption
-  }
-
 }

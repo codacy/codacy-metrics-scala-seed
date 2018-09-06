@@ -1,8 +1,9 @@
 package com.codacy.docker.api.metrics
 
 import better.files.File
-import codacy.docker.api.{MetricsConfiguration, Source}
-import com.codacy.api.dtos.Languages.Scala
+import com.codacy.plugins.api.Source
+import com.codacy.plugins.api.languages.Languages.Scala
+import com.codacy.plugins.api.metrics.MetricsTool
 import org.specs2.mutable.Specification
 import play.api.libs.json.Json
 
@@ -18,18 +19,18 @@ class DockerMetricsEnvironmentSpecs extends Specification {
         tempFile <- File.temporaryFile()
       } yield {
         val metricsConfiguration =
-          MetricsConfiguration(Some(Set(Source.File(s"${tempFile.parent.pathAsString}/a.scala"))),
-                               Some(Scala),
-                               Some(Map.empty))
+          MetricsTool.CodacyConfiguration(Some(Set(Source.File(s"${tempFile.parent.pathAsString}/a.scala"))),
+                                          Some(Scala),
+                                          Some(Map.empty))
         tempFile.write(Json.stringify(Json.toJson(metricsConfiguration)))
 
         //when
         val metricsConfig =
-          dockerMetricsEnvironment.getConfiguration(tempFile, tempFile.parent)
+          dockerMetricsEnvironment.configurations(rootFile = tempFile.parent, configFile = tempFile)
 
         //then
         // scalafix:off NoInfer.any
-        metricsConfig must beSuccessfulTry[Option[MetricsConfiguration]](Some(metricsConfiguration))
+        metricsConfig must beSuccessfulTry[Option[MetricsTool.CodacyConfiguration]](Some(metricsConfiguration))
         // scalafix:on NoInfer.any
       }).get()
     }
@@ -43,7 +44,7 @@ class DockerMetricsEnvironmentSpecs extends Specification {
 
         //when
         val metricsConfig =
-          dockerMetricsEnvironment.getConfiguration(tempFile, tempFile.parent)
+          dockerMetricsEnvironment.configurations(rootFile = tempFile.parent, configFile = tempFile)
 
         //then
         metricsConfig must beFailedTry
@@ -57,11 +58,12 @@ class DockerMetricsEnvironmentSpecs extends Specification {
 
       //when
       val metricsConfig =
-        dockerMetricsEnvironment.getConfiguration(nonExistentFile, srcFolder)
+        dockerMetricsEnvironment.configurations(rootFile = srcFolder, configFile = nonExistentFile)
 
       //then
       // scalafix:off NoInfer.any
-      metricsConfig must beSuccessfulTry[Option[MetricsConfiguration]](Option.empty[MetricsConfiguration])
+      metricsConfig must beSuccessfulTry[Option[MetricsTool.CodacyConfiguration]](
+        Option.empty[MetricsTool.CodacyConfiguration])
       // scalafix:on NoInfer.any
     }
   }
