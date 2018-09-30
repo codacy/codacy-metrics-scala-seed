@@ -9,7 +9,6 @@ import com.codacy.plugins.api.{Options, Source}
 import org.specs2.mutable.Specification
 import play.api.libs.json.Json
 
-import scala.concurrent.TimeoutException
 import scala.concurrent.duration._
 import scala.util.{Failure, Random, Success, Try}
 
@@ -80,8 +79,10 @@ class DockerMetricsSpecs extends Specification {
       //given
       val outContent = new ByteArrayOutputStream()
       val printStream = new PrintStream(outContent)
+
       val timeOutValue = "2 seconds"
-      val timeOutException = new TimeoutException(s"Metrics tool timed out after: $timeOutValue")
+      val timeOutMsg = s"A timeout halt should happen after $timeOutValue."
+
       val metricsTool = new MetricsTool {
         override def apply(source: Source.Directory,
                            language: Option[Language],
@@ -91,17 +92,23 @@ class DockerMetricsSpecs extends Specification {
           Success(List.empty)
         }
       }
+
       val dockerMetrics =
         new DockerMetrics(metricsTool = metricsTool,
-                          environment = new DockerMetricsEnvironment(Map("METRICS_TIMEOUT" -> timeOutValue)))(
+                          environment = new DockerMetricsEnvironment(Map("TIMEOUT" -> timeOutValue)))(
           printer = new MetricsResultsPrinter(logStream = printStream)) {
           override def halt(status: Int): Unit = {
-            throw timeOutException
+            if (status == 2) {
+              printStream.print(timeOutMsg)
+            }
           }
         }
 
-      //when and then
-      dockerMetrics.main(Array.empty) must throwA(timeOutException)
+      //when
+      dockerMetrics.main(Array.empty)
+
+      //then
+      outContent.toString must beEqualTo(s"$timeOutMsg")
     }
   }
 }
