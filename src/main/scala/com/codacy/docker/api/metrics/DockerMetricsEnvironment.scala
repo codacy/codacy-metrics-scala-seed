@@ -20,7 +20,9 @@ class DockerMetricsEnvironment(variables: Map[String, String] = sys.env) {
       for {
         content <- Try(configFile.byteArray)
         json <- Try(Json.parse(content))
-        cfg <- json.validate[MetricsTool.CodacyConfiguration].fold(asFailure, Success.apply)
+        cfg <- json
+          .validate[MetricsTool.CodacyConfiguration]
+          .fold(error => Failure(new Throwable(Json.stringify(JsError.toJson(error.toList)))), Success.apply)
       } yield {
         Option(cfg.copy(files = cfg.files.map(_.map(file => file.copy(path = (rootFile / file.path).toString)))))
       }
@@ -40,8 +42,4 @@ class DockerMetricsEnvironment(variables: Map[String, String] = sys.env) {
 
   val debug: Boolean =
     variables.get("DEBUG").flatMap(debugStrValue => Try(debugStrValue.toBoolean).toOption).getOrElse(false)
-
-  private def asFailure[T](error: Seq[(JsPath, Seq[JsonValidationError])]): Try[T] =
-    Failure[T](new Throwable(Json.stringify(JsError.toJson(error.toList))))
-
 }
