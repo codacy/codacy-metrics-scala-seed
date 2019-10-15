@@ -24,7 +24,6 @@ description := "Library to develop Codacy metrics plugins"
 
 scmInfo := Some(
   ScmInfo(url("https://github.com/codacy/codacy-metrics-scala-seed"),
-          "scm:git:git@github.com:codacy/codacy-metrics-scala-seed.git")
-)
+          "scm:git:git@github.com:codacy/codacy-metrics-scala-seed.git"))
 
 publicMvnPublish
