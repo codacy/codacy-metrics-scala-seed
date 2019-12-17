@@ -9,7 +9,7 @@ scalaVersion := "2.12.10"
 crossScalaVersions := Seq(scala211, scala212, scala213)
 name := "codacy-metrics-scala-seed"
 libraryDependencies ++= Seq(("com.typesafe.play" %% "play-json" % "2.7.4").withSources(),
-                            ("com.codacy" %% "codacy-plugins-api" % "3.0.80").withSources(),
+                            ("com.codacy" %% "codacy-plugins-api" % "3.1.0").withSources(),
                             ("com.github.pathikrit" %% "better-files" % "3.8.0").withSources(),
                             "org.specs2" %% "specs2-core" % specs2Version % Test,
                             "org.specs2" %% "specs2-mock" % specs2Version % Test)
