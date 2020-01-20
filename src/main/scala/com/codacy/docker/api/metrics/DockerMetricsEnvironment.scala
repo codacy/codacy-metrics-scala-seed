@@ -1,6 +1,7 @@
 package com.codacy.docker.api.metrics
 
 import java.nio.file.{Path, Paths}
+import java.util.concurrent.TimeUnit
 
 import better.files._
 import com.codacy.plugins.api.metrics.MetricsTool
@@ -33,11 +34,8 @@ class DockerMetricsEnvironment(variables: Map[String, String] = sys.env) {
 
   val defaultTimeout: FiniteDuration =
     variables
-      .get("TIMEOUT")
-      .flatMap(timeoutStrValue =>
-        Try(Duration(timeoutStrValue)).toOption.collect {
-          case d: FiniteDuration => d
-      })
+      .get("TIMEOUT_SECONDS")
+      .flatMap(timeoutStrValue => Try(FiniteDuration(timeoutStrValue.toLong, TimeUnit.SECONDS)).toOption)
       .getOrElse(15.minutes)
 
   val debug: Boolean =

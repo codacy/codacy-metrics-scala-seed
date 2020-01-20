@@ -80,7 +80,7 @@ class DockerMetricsSpecs extends Specification {
       val outContent = new ByteArrayOutputStream()
       val printStream = new PrintStream(outContent)
 
-      val timeOutValue = "2 seconds"
+      val timeOutValue = "2"
       val timeOutMsg = s"A timeout halt should happen after $timeOutValue."
 
       val metricsTool = new MetricsTool {
@@ -95,7 +95,7 @@ class DockerMetricsSpecs extends Specification {
 
       val dockerMetrics =
         new DockerMetrics(metricsTool = metricsTool,
-                          environment = new DockerMetricsEnvironment(Map("TIMEOUT" -> timeOutValue)))(
+                          environment = new DockerMetricsEnvironment(Map("TIMEOUT_SECONDS" -> timeOutValue)))(
           printer = new MetricsResultsPrinter(logStream = printStream)) {
           override def halt(status: Int): Unit = {
             if (status == 2) {
