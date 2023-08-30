@@ -21,9 +21,7 @@ class DelayedSpecs extends Specification with Delayed {
         success("The delay didn't throw a TimeoutException exception")
       }
 
-      // scalafix:off NoInfer.any
-      Await.result(f, Duration.Inf) must not(throwA[TimeoutException])
-      // scalafix:on NoInfer.any
+      Await.result(f, Duration.Inf)
     }
   }
 }
