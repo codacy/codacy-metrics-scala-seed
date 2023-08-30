@@ -5,9 +5,9 @@ import java.util.concurrent.TimeUnit
 
 import better.files._
 import com.codacy.plugins.api.metrics.MetricsTool
-import play.api.libs.json.{JsError, JsPath, Json, JsonValidationError}
+import play.api.libs.json.{JsError, Json}
 
-import scala.concurrent.duration.{Duration, FiniteDuration, _}
+import scala.concurrent.duration._
 import scala.util.{Failure, Success, Try}
 
 class DockerMetricsEnvironment(variables: Map[String, String] = sys.env) {
