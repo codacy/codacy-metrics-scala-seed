@@ -21,7 +21,7 @@ workflows:
           name: publish
           context: CodacyAWS
           aws_profile: maven
-          cmd: sbt retrieveGPGKeys +publishSigned sonatypeCentralRelease
+          cmd: sbt +publish
           requires:
             - compile_test
           filters:
