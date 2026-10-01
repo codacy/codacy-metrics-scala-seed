@@ -22,3 +22,6 @@ scmInfo := Some(
           "scm:git:git@github.com:codacy/codacy-metrics-scala-seed.git"))
 
 privateMvnPublish
+
+publishConfiguration := publishConfiguration.value.withOverwrite(true)
+publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
