@@ -20,6 +20,7 @@ workflows:
       - codacy/sbt:
           name: publish
           context: CodacyAWS
+          aws_profile: maven
           cmd: sbt +publish
           requires:
             - compile_test
