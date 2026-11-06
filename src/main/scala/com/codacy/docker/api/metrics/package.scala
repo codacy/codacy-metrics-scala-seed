@@ -1,7 +1,7 @@
 package com.codacy.docker.api
 
 import com.codacy.plugins.api.languages.{Language, Languages}
-import com.codacy.plugins.api.metrics.{FileMetrics, LineComplexity, MetricsTool}
+import com.codacy.plugins.api.metrics.{FileMetrics, MetricsTool}
 import com.codacy.plugins.api.{Options, Source}
 import play.api.libs.json._
 
@@ -60,8 +60,6 @@ package object metrics {
           case _                    => Option.empty[(String, JsValue)]
         })))
 
-  implicit val lineComplexityFormat: OFormat[LineComplexity] =
-    Json.format[LineComplexity]
   implicit val fileMetricsFormat: OFormat[FileMetrics] =
     Json.format[FileMetrics]
   implicit val metricsConfigurationFormat: OFormat[MetricsTool.CodacyConfiguration] =
